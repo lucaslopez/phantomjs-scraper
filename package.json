@@ -1,0 +1,22 @@
+{
+  "name": "phantomjs-scraper",
+  "version": "1.0.0",
+  "description": "PhantomJS scraper module",
+  "main": "scrap.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucaslopez/phantomjs-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucaslopez/phantomjs-scraper/issues"
+  },
+  "homepage": "https://github.com/lucaslopez/phantomjs-scraper#readme",
+  "dependencies": {
+    "colors": "^1.1.2"
+  }
+}

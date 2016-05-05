@@ -1,0 +1,6 @@
+*.gitignore.*
+node_modules
+bower_components
+spiders/*
+!spiders/examples
+!spiders/examples/*

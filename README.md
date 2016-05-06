@@ -18,11 +18,11 @@ var Spider = phantomScraper.Spider;
 ```javascript
 var config = 
 {
-	dir_root: fs.workingDirectory;
-	dir_data:  exports.dir_root + "/data";
-	dir_rsc: exports.dir_root + "/bower_components";
-	dir_logs: exports.dir_root + "/logs";
-	dir_spiders: exports.dir_root + "/spiders";
+	dir_root: fs.workingDirectory,
+	dir_data:  exports.dir_root + "/data",
+	dir_rsc: exports.dir_root + "/bower_components",
+	dir_logs: exports.dir_root + "/logs",
+	dir_spiders: exports.dir_root + "/spiders"
 };
 ```
 3. Instantiate a Scraper object

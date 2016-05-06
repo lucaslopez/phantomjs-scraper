@@ -1,10 +1,13 @@
+var util = require('./util.js');
+
 
 // Define new class
-function Scraper()
+function Scraper(settings)
 {
 	this.spiders = [];
 	this.running = [];
 	this.status = "stopped";
+	this.settings = settings;
 }
 
 // Define class methods
@@ -14,14 +17,31 @@ Scraper.prototype.createSpider = function(name)
 {
 	//var s = new name();
 };
-	
+
 Scraper.prototype.addSpiderObject = function(spider)
 {
-	spider.initialize();
-	spider.setScraper(this);
-	this.spiders.push(spider)
+	if (spider)
+	{
+		this.spiders.push(spider);
+		spider.setScraper(this);
+		spider.initialize();
+	}
 };
-	
+
+Scraper.prototype.createSpider = function(spiderName)
+{
+	try
+	{
+		var TargetSpider = require(this.settings.dir_spiders + '/' + spiderName + '.js');
+		var spider = new TargetSpider();
+		this.addSpiderObject(spider);
+	}
+	catch (err)
+	{
+		throw(err);
+	}
+};
+
 Scraper.prototype.initialize = function()
 {
 };
@@ -57,7 +77,13 @@ Scraper.prototype.checkStatus = function(name)
 	if (this.status == "running" && this.running.length == 0)
 	{
 		util.log("Exiting...");
-		phantom.exit();
+		//phantom.exit();
+		// Because of a phantomjs bug
+		// http://stackoverflow.com/questions/19144632/phantomjs-crashes-after-phantom-exit-on-linux
+		setTimeout(function()
+		{
+			phantom.exit(0);
+		}, 0);
 	}
 }
 

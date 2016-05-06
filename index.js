@@ -1,6 +1,8 @@
-var module = {};
+var m = {};
 
-module.Scraper = require('./scraper.js');
-module.Spider = require('./spider.js');
+m.test = "testa";
+m.Scraper = require('./scraper.js');
+m.Spider = require('./spider.js');
+m.util = require('./util.js');
 
-module.exports = module;
+module.exports = m;

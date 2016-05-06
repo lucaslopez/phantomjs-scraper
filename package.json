@@ -2,7 +2,7 @@
   "name": "phantomjs-scraper",
   "version": "1.0.0",
   "description": "PhantomJS scraper module",
-  "main": "scrap.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/lucaslopez/phantomjs-scraper#readme",
   "dependencies": {
-    "colors": "^1.1.2"
+    "colors": "^1.1.2",
+    "process": "^0.11.2",
+    "url": "^0.11.0"
   }
 }

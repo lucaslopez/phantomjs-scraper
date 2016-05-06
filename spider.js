@@ -1,3 +1,7 @@
+var webpage = require('webpage');
+var url = require('url');
+var util = require('./util.js');
+
 // Define the new class
 function Spider()
 {
@@ -49,7 +53,7 @@ Spider.prototype.getDataPath = function()
 	if (mm < 10) mm='0'+mm;
 	var yyyy = d.getFullYear();
 	var prev = yyyy + "-" + mm + "-" + dd + "-" + hh + "-" + mn;
-	return settings.dir_data + "/" + this.name + "/" + prev + "-" + this.cProcess.startTime + "/";
+	return this.scraper.settings.dir_data + "/" + this.name + "/" + prev + "-" + this.cProcess.startTime + "/";
 };
 
 Spider.prototype.lock = function()
@@ -267,55 +271,37 @@ Spider.prototype.finishConnection = function()
 	this.curConnections--;
 }
 
-Spider.prototype.preparePage = function(page)
-{
-	util.log("Preparing page...");
-	
-	/*
-	page.onConsoleMessage = function(msg, lineNum, sourceId)
-	{
-		util.log('[Page message] ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
-	};
-	*/
-	
-	page.onConsoleMessage = function (msg)
-	{
-		util.log('[Page message] ' + msg);
-	};
-	
-	/*
-	page.onError = function(msg, trace)
-	{
-		util.log('Page has an internal error: ' + msg);
-	};
-	*/
-}
-
-Spider.prototype.process = function(page)
-{
-	util.log("Processing page...");
-};
-
 Spider.prototype.preparePageBeforeLoad = function(page)
 {
 	page.onError = function(msg, trace)
 	{
 		util.log('Page has an internal error: ' + msg);
+		util.print_object(trace);
 	};
 	
-	/*page.onConsoleMessage = function(msg, lineNum, sourceId)
-	{
-		util.log('[Page message] ' + msg + ' (from line #' + lineNum + ' in "' + sourceId + '")');
-	};*/
-	
-	/*page.settings.resourceTimeout = 5000;
+	page.resourceTimeout = 5000;
 	page.onResourceTimeout = function(e)
 	{
 		console.log(e.errorCode);   // it'll probably be 408 
 		console.log(e.errorString); // it'll probably be 'Network timeout on resource'
 		console.log(e.url);         // the url whose request timed out
 		phantom.exit(1);
-	};*/
+	};
+};
+
+Spider.prototype.preparePage = function(page)
+{
+	util.log("Preparing page...");
+	
+	page.onConsoleMessage = function (msg)
+	{
+		util.log('[Page message] ' + msg);
+	};
+}
+
+Spider.prototype.process = function(page)
+{
+	util.log("Processing page...");
 };
 
 Spider.prototype.loadPage = function(url)
@@ -324,7 +310,7 @@ Spider.prototype.loadPage = function(url)
 	this.startConnection();
 	util.log("--------------------------------------------------------------------------------------");
 	util.log("Loading page " + url + " [" + this.curConnections + "/" + this.maxConnections + "]");
-	var page = require('webpage').create();
+	var page = webpage.create();
 	this.preparePageBeforeLoad(page);
 	// open the page
 	page.open(url, function(status)
@@ -377,10 +363,10 @@ Spider.prototype.inject = function(what, page)
 			};
 		});
 	}
-	else if (what == "jquery-2.1.0")
+	else if (what == "jquery")
 	{
-		util.log("Inserting jquery-2.1.0 ...");
-		page.injectJs(settings.dir_rsc + '/jquery-2.1.0/jquery-2.1.0.min.js');
+		util.log("Inserting jquery...");
+		page.injectJs(this.scraper.settings.dir_rsc + '/jquery/dist/jquery.min.js');
 		page.evaluate(function()
 		{
 			$$ = $.noConflict(true);
@@ -429,9 +415,9 @@ Spider.prototype.dumpData = function(format, params)
 		}
 	}
 	// copy all data to the "last" directory
-	var dir_last = settings.dir_data + "/" + this.name + "/" + "last";
-	fs.removeTree(settings.dir_data + "/" + this.name + "/" + "last");
-	fs.copyTree(this.getDataPath(), settings.dir_data + "/" + this.name + "/" + "last");
+	var dir_last = this.scraper.settings.dir_data + "/" + this.name + "/" + "last";
+	fs.removeTree(this.scraper.settings.dir_data + "/" + this.name + "/" + "last");
+	fs.copyTree(this.getDataPath(), this.scraper.settings.dir_data + "/" + this.name + "/" + "last");
 }
 
 Spider.prototype.extractLinks = function(page, selector, complete_urls, admited_protocols, banned_protocols, add)
@@ -452,7 +438,6 @@ Spider.prototype.extractLinks = function(page, selector, complete_urls, admited_
 			var val = $$(this).attr("href");
 			if (typeof val !== 'undefined')
 				r.push(val.toString());
-			//console.log($$(this).attr("href"));
 		});
 		return r;
 	}, selector);
@@ -464,7 +449,7 @@ Spider.prototype.extractLinks = function(page, selector, complete_urls, admited_
 		var link = "";
 		var a = url.parse(element);
 		var filter_ok = true;
-		if (typeof a.protocol !== "undefined" && (admited_protocols.indexOf(a.protocol) == -1 || banned_protocols.indexOf(a.protocol) == 1))
+		if (typeof a.protocol !== "undefined" && a.protocol != null && (admited_protocols.indexOf(a.protocol) == -1 || banned_protocols.indexOf(a.protocol) == 1))
 		{
 			filter_ok = false;
 		}

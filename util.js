@@ -17,7 +17,7 @@ exports.obj2csv = function(obj, separator)
 {
 	// default vars
 	//var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-	var separator = typeof separator !== 'undefined' ? separator : ';';
+	var separator = typeof separator !== 'undefined' ? separator : ',';
 	// prepare output
 	var line = '';
 	for (var index in obj)
@@ -39,7 +39,7 @@ exports.arr2csv = function(a, separator, headers)
 {
 	// default vars
 	var a = typeof a != 'object' ? JSON.parse(a) : a;
-	var separator = typeof separator !== 'undefined' ? separator : ';';
+	var separator = typeof separator !== 'undefined' ? separator : ',';
 	// add headers
 	var str = '';
 	var keys = Object.keys(a);
